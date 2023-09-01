@@ -20,7 +20,7 @@ public class ConexionDB {
     // private: Este modificador de acceso asegura que la variable sólo puede ser accedida directamente dentro de la clase en la que fue declarada
     // final :  Este modificador indica que una vez que se le asigna un valor a la variable (ya sea en el momento de la declaración o dentro del constructor de la clase), no puede ser cambiado
     // Declara variables para los detalles de conexión: nombre de la base de datos, usuario, contraseña
-    private final String base = ;
+    private final String base = "basedatosparcial";
     private final String user = "root";
     private final String password = "";
 
