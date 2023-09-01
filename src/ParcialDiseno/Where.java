@@ -266,58 +266,67 @@ public class Where extends javax.swing.JFrame {
 
     private void btnCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarActionPerformed
         // TODO add your handling code here:
-        String id = txtId.getText();
-        String where = "";
-        if(!"".equals(id)){
-            where = "WHERE id  = '" + id +"'";
+        if(txtId.getText().isEmpty()){
+            JOptionPane.showMessageDialog(rootPane, "Digite un numero de id para buscar una mascota");
+            
+        }else{
+            String id = txtId.getText();
+            String where = "";
+            if(!"".equals(id)){
+                where = "WHERE id  = '" + id +"'";
+            }
+
+            try{
+                DefaultTableModel modelo = new  DefaultTableModel();
+                userTable.setModel(modelo);
+
+                PreparedStatement ps = null;
+                ResultSet rs = null;
+                ConexionDB conn = new ConexionDB();
+                Connection con = conn.getConexion();
+
+                String sql = "SELECT id , nombre , raza , edad , nombre_dueño , id_dueño , telefono_dueño FROM mascotas " + where;
+                ps = con.prepareStatement(sql);
+                rs = ps.executeQuery();
+
+                ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
+
+                int cantidadColumnas = rsMd.getColumnCount();
+
+                modelo.addColumn("Id");
+                modelo.addColumn("Nombre");
+                modelo.addColumn("Raza");          
+                modelo.addColumn("Edad");
+                modelo.addColumn("Nombre Dueño");
+                modelo.addColumn("Id Dueño");
+                modelo.addColumn("Telefono Dueño");
+
+                int anchos[] = {50, 100, 50, 50 ,100 , 50 , 50};
+                for (int i = 0; i < userTable.getColumnCount(); i++) {
+                    userTable.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
+                }
+
+                while(rs.next()){
+                    Object[] filas = new Object[cantidadColumnas];
+                    for (int i = 0; i < cantidadColumnas; i++) {
+                        filas[i] = rs.getObject(i + 1);
+                    }
+                    modelo.addRow(filas);
+                }
+
+            }catch(SQLException ex){
+                System.err.println(ex.toString());
+            }
+            
         }
         
-        try{
-            DefaultTableModel modelo = new  DefaultTableModel();
-            userTable.setModel(modelo);
-
-            PreparedStatement ps = null;
-            ResultSet rs = null;
-            ConexionDB conn = new ConexionDB();
-            Connection con = conn.getConexion();
-
-            String sql = "SELECT id , nombre , raza , edad , nombre_dueño , id_dueño , telefono_dueño FROM mascotas " + where;
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
-
-            ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
-
-            int cantidadColumnas = rsMd.getColumnCount();
-
-            modelo.addColumn("Id");
-            modelo.addColumn("Nombre");
-            modelo.addColumn("Raza");          
-            modelo.addColumn("Edad");
-            modelo.addColumn("Nombre Dueño");
-            modelo.addColumn("Id Dueño");
-            modelo.addColumn("Telefono Dueño");
-
-            int anchos[] = {50, 100, 50, 50 ,100 , 50 , 50};
-            for (int i = 0; i < userTable.getColumnCount(); i++) {
-                userTable.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
-            }
-
-            while(rs.next()){
-                Object[] filas = new Object[cantidadColumnas];
-                for (int i = 0; i < cantidadColumnas; i++) {
-                    filas[i] = rs.getObject(i + 1);
-                }
-                modelo.addRow(filas);
-            }
-
-        }catch(SQLException ex){
-            System.err.println(ex.toString());
-        }
+        
+        
     }//GEN-LAST:event_btnCargarActionPerformed
 
     private void btEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarActionPerformed
         // TODO add your handling code here:
-        if(txtId.getText().isEmpty() || txtEdad.getText().isEmpty() || txtNombre.getText().isEmpty() || txtRaza.getText().isEmpty() || txtNomDueno.getText().isEmpty()){
+        if(txtId.getText().isEmpty() || txtEdad.getText().isEmpty() || txtNombre.getText().isEmpty() || txtRaza.getText().isEmpty() || txtNomDueno.getText().isEmpty() || txtIdDueno.getText().isEmpty() || txtTelefono.getText().isEmpty()){
             JOptionPane.showMessageDialog(rootPane, "Complete todos los campos para editar los datos el producto correctamente");
             return;
         }else{
@@ -354,7 +363,7 @@ public class Where extends javax.swing.JFrame {
 
     private void btGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGuardarActionPerformed
         // TODO add your handling code here:
-        if(txtId.getText().isEmpty() || txtEdad.getText().isEmpty() || txtNombre.getText().isEmpty() || txtRaza.getText().isEmpty() || txtNomDueno.getText().isEmpty()){
+        if(txtId.getText().isEmpty() || txtEdad.getText().isEmpty() || txtNombre.getText().isEmpty() || txtRaza.getText().isEmpty() || txtNomDueno.getText().isEmpty() || txtIdDueno.getText().isEmpty() || txtTelefono.getText().isEmpty()){
             JOptionPane.showMessageDialog(rootPane, "Complete todos los campos para guardar el producto correctamente");
             return;
         }else{
@@ -436,7 +445,6 @@ public class Where extends javax.swing.JFrame {
         txtNombre.setText(userTable.getValueAt(row,1).toString());
         txtRaza.setText(userTable.getValueAt(row,2).toString());
         txtEdad.setText(userTable.getValueAt(row,3).toString());
-        
         txtNomDueno.setText(userTable.getValueAt(row,4).toString());
         txtIdDueno.setText(userTable.getValueAt(row,5).toString());
         txtTelefono.setText(userTable.getValueAt(row,6).toString());
